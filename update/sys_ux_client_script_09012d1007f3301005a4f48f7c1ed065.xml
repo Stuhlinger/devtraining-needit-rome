@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ux_client_script">
+    <sys_ux_client_script action="INSERT_OR_UPDATE">
+        <includes/>
+        <macroponent display_value="Home">223f9e631b46f41068dd5464604bcb2a</macroponent>
+        <name>Generate query and title</name>
+        <required_translations>[ ]</required_translations>
+        <script><![CDATA[/**
+ * @param {params} params
+ * @param {api} params.api
+ * @param {any} params.event
+ * @param {any} params.imports
+ * @param {ApiHelpers} params.helpers
+ */
+function handler({
+    api,
+    event,
+    helpers,
+    imports
+}) {
+    // Script overview: Get current client state parameter values and
+    // update the values with the selected Request type
+    // filter information
+    console.log("Starting generate query and title executed");
+    // Get current client state parameter values
+    var cspListQuery = api.state.listQuery;
+    var cspListTitle = api.state.listTitle;
+    console.log("api.state.listQuery = " + api.state.listQuery);
+
+    // Get payload from handled event
+    var passedQuery = event.payload.heListQuery;
+    var passedTitle = event.payload.heListTitle;
+    console.log("event.payload.heListQuery = " + event.payload.heListQuery);
+
+    // Clear Request type from existing query by splitting on the parameter 
+    // in the encoded query
+
+    // // IMPORTANT: If 'cspListQuery' does not contain '^u_request_type=', then cspListQueryArray[0] is undefined, probably since you cannot split anything, so no array is created 
+    // console.log("cspListQuery: " + cspListQuery); 
+    // var cspListQueryArray = cspListQuery.split('^u_request_type=');
+    // console.log("cspListQueryArray[0]: " + cspListQueryArray[0]);
+    
+    // // Clear Request type from existing title   
+    // var cspListTitleArray = cspListTitle.split(' - ');
+
+    // Check to see if a Request type is passed in the payload
+    // A Request type is passed when a radio button is selected
+    if (passedQuery == 'legal' || passedQuery == 'facilities' || passedQuery == 'hr') {
+        // IMPORTANT: If 'cspListQuery' does not contain '^u_request_type=', then cspListQueryArray[0] is undefined, probably since you cannot split anything, so no array is created
+        console.log("cspListQuery: " + cspListQuery);
+        var cspListQueryArray = cspListQuery.split('^u_request_type=');
+        console.log("cspListQueryArray[0]: " + cspListQueryArray[0]);
+
+        // Clear Request type from existing title   
+        var cspListTitleArray = cspListTitle.split(' - ');
+
+
+        // If a Request type is passed, update the query and title to reflect
+        // the selected Request type
+        api.setState('listQuery', cspListQueryArray[0] + '^u_request_type=' + passedQuery);
+        api.setState('listTitle', cspListTitleArray[0] + ' - ' + passedQuery);
+        
+        // Update the reqType client state parameter value to the selected Request type
+        api.setState('reqType', passedQuery);
+        
+    } else if (passedQuery == 'all') {
+        // IMPORTANT: If 'cspListQuery' does not contain '^u_request_type=', then cspListQueryArray[0] is undefined, probably since you cannot split anything, so no array is created  
+        var cspListQueryArray = cspListQuery.split('^u_request_type=');
+        
+        // Clear Request type from existing title   
+        var cspListTitleArray = cspListTitle.split(' - ');
+
+        // If the All radio button is selected, remove the Request type from 
+        // the query
+        api.setState('listQuery', cspListQueryArray[0]);
+        api.setState('listTitle', cspListTitleArray[0]);
+        
+        // Update the reqType client state parameter value to all
+        api.setState('reqType', 'all');
+
+        console.log("'All' executed");
+
+    } else {
+        // Else just pass the values passed to the event handler
+        // This branch runs when filter buttons are clicked
+        
+        // If the Request type value is something besides all, persist the value
+        // in the query and the title by appending the reqType value
+        if (api.state.reqType != 'all'){
+            passedQuery = passedQuery + '^u_request_type=' + api.state.reqType;
+            passedTitle = passedTitle + ' - ' + api.state.reqType;
+        }
+
+        api.setState('listQuery', passedQuery);
+        api.setState('listTitle', passedTitle);
+
+        console.log("Did the 'else' part");
+       
+    }
+    console.log(JSON.stringify(event.payload,null,4));
+    //POGGERS THIS WORKS NOW, ONLY DO THE SPLIT INTO ARRAY STUFF WHEN GOING INTO THE BUTTONS, YOU DON'T GET ERRORS WHEN DOING SOMETHING WITH A WRONG ERRAY, BUT WHEN SOMETHING IS UNDEFINED
+  }]]></script>
+        <script_api_version>2.0.0</script_api_version>
+        <sys_class_name>sys_ux_client_script</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2021-11-09 11:09:43</sys_created_on>
+        <sys_id>09012d1007f3301005a4f48f7c1ed065</sys_id>
+        <sys_mod_count>49</sys_mod_count>
+        <sys_name>Generate query and title</sys_name>
+        <sys_package display_value="NeedIt" source="x_58872_needit">6ead8e780f603200cd674f8ce1050ed1</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="NeedIt">6ead8e780f603200cd674f8ce1050ed1</sys_scope>
+        <sys_update_name>sys_ux_client_script_09012d1007f3301005a4f48f7c1ed065</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2021-11-10 08:51:22</sys_updated_on>
+    </sys_ux_client_script>
+</record_update>
